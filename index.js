@@ -52,5 +52,20 @@ server.get('/api/users', (req, res) => {
     .catch(err => res.send(err));
 });
 
+server.get('/hash', (req, res) => {
+  const { password } = req.headers;
+  const hash = bcrypt.hashSync(password, 12);
+
+  Users.find()
+    .then(users => {
+      if (password) {
+        res.status(200).json({ hash: hash }, users);
+      }
+    })
+    .catch(err => {
+      res.status(400).json({ message: err });
+    });
+});
+
 const port = process.env.PORT || 5000;
 server.listen(port, () => console.log(`\n** Running on port ${port} **\n`));
